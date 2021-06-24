@@ -1,0 +1,7 @@
+{
+    "SuperAdmin": true,
+    "Clients": true,
+    "Agents": true,
+    "Properties": true,
+    "Contact": true
+}

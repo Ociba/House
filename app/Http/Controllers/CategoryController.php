@@ -1,39 +1,23 @@
 <?php
 
-namespace Modules\Properties\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 use Modules\Properties\Entities\Category;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function getCategory()
+   /** 
+    * get categories
+   */
+  public function getCategory()
     {
         $get_property_category =Category::get();
         return $get_property_category->tojson();
     }
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
-    {
-       
-        return view('properties::create_category');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
+    /** 
+     * Create Categories
+    */
     public function createCategory(Request $request)
     {
         //
@@ -48,34 +32,14 @@ class CategoryController extends Controller
         ]);
         return response()->json('New property Category has been created successfully');
     }
-
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('properties::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
+    /** 
+     * This function edits category
+    */
     public function editCategory($id)
     {
         $edit_category = Category::where('id',$id)->get();
         return response()->json($edit_category);
     }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
     public function updateCategory(Request $request, $id)
     {
         //

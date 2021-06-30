@@ -9,7 +9,8 @@ class PropertyDetails extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
+    protected $fillable = ['category_id','user_id','property_size','bedroom','bathroom','garage',
+                           'location','description','price','image','property_status'];
     
     protected static function newFactory()
     {

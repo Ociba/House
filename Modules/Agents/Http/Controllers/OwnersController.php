@@ -5,6 +5,10 @@ namespace Modules\Agents\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Hash;
+use Modules\Agents\Entities\Owner;
+use Auth;
+use App\Models\User;
 
 class OwnersController extends Controller
 {
@@ -12,9 +16,10 @@ class OwnersController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
+    public function getOwner()
     {
-        return view('agents::index');
+        $get_property_owner =Owner::get();
+        return $get_agent->tojson();
     }
 
     /**
@@ -31,9 +36,37 @@ class OwnersController extends Controller
      * @param Request $request
      * @return Renderable
      */
-    public function store(Request $request)
+    public function createOwner(Request $request)
     {
-        //
+        $create_owner =new Owner;
+        $create_owner ->name  =request()->name;
+        $create_owner ->email =request()->email;
+        $create_owner ->phone_number =request()->phone_number;
+        $create_owner ->current_location =request()->current_location;
+        $create_owner ->photo = $this->movePhotoToFolder();
+        $create_owner ->created_by =Auth::user()->id;
+        $create_owner ->save();
+
+        $create_owners_account =new User;
+        $create_owners_account ->name  =request()->name;
+        $create_owners_account ->email =request()->email;
+        $create_owners_account ->password =Hash::make(request()->password);
+        $create_owners_account  ->save();
+        return response()->json('New Owner has been created successfully');
+    }
+
+    /**
+     * this function adds the photo to the folder
+     */
+    private function movePhotoToFolder(){
+        if(empty(request()->photo)){
+            return null;
+        }else{
+            $photo_path = request()->photo;
+            $file_path = $photo_path->getClientOriginalName();
+            $photo_path->move('Owner/Photos',$file_path);
+            return $file_path;
+        }
     }
 
     /**
@@ -51,9 +84,10 @@ class OwnersController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function edit($id)
+    public function editOwner($id)
     {
-        return view('agents::edit');
+        $edit_owner =Owner::where('id', $id)->get();
+        return response()->json($edit_owner);
     }
 
     /**
@@ -62,9 +96,16 @@ class OwnersController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function update(Request $request, $id)
+    public function updateOwner(Request $request, $id)
     {
         //
+        Owner::where('id', $id)->update(array(
+            'name'       =>request()->name,
+            'email'      =>request()->email,
+            'phone_number'=>request()->phone_number,
+            'current_location'=>request()->current_location
+        ));
+        return response()->json('Property Owner info has been Updated successfully');
     }
 
     /**
@@ -72,8 +113,10 @@ class OwnersController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function destroy($id)
+    public function deleteOwner($id)
     {
         //
+        Owner::where('id', $id)->delete();
+        return response()->json('Owner has been Deleted successfully');
     }
 }

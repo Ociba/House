@@ -9,7 +9,7 @@ class Broker extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
+    protected $fillable = ['name','email','phone_number','current_location','photo'];
     
     protected static function newFactory()
     {

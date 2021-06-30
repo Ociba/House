@@ -5,6 +5,7 @@ namespace Modules\Clients\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use App\Models\User;
 
 class ClientController extends Controller
 {
@@ -14,7 +15,8 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return view('clients::index');
+        $get_client =User::get();
+        return $get_client->tojson();
     }
 
     /**
@@ -52,8 +54,8 @@ class ClientController extends Controller
      * @return Renderable
      */
     public function edit($id)
-    {
-        return view('clients::edit');
+    {   $edit_users =User::where('id', $id)->get();
+        return response()->json($edit_users);
     }
 
     /**
@@ -64,7 +66,13 @@ class ClientController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $client =User::find($id);
+        $client->name =$request->name;
+        $client->email =$request->email;
+        $client->phone_number =$request->phone_number;
+        $client ->save();
+
+        return response()->json('message', 'Successfully Updated');
     }
 
     /**
@@ -72,8 +80,9 @@ class ClientController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function destroy($id)
+    public function destroy($user_id)
     {
-        //
+        User::where('id', $user_id)->update(array('status' =>'suspended'));
+        return response()->json('message','Successfully Deleted');
     }
 }

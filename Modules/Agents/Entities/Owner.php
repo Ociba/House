@@ -9,7 +9,7 @@ class Owner extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
+    protected $fillable = ['name','email','phone_number','current_location','photo','created_by'];
     
     protected static function newFactory()
     {

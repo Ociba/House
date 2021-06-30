@@ -5,6 +5,10 @@ namespace Modules\Agents\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Hash;
+use Modules\Agents\Entities\Broker;
+use Auth;
+use App\Models\User;
 
 class AgentsController extends Controller
 {
@@ -12,9 +16,10 @@ class AgentsController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
+    public function getBroker()
     {
-        return view('agents::index');
+        $get_agent =Broker::get();
+        return $get_agent->tojson();
     }
 
     /**
@@ -31,9 +36,38 @@ class AgentsController extends Controller
      * @param Request $request
      * @return Renderable
      */
-    public function store(Request $request)
+    public function createBroker(Request $request)
     {
         //
+        $create_agent =new Broker;
+        $create_agent ->name  =request()->name;
+        $create_agent ->email =request()->email;
+        $create_agent ->phone_number =request()->phone_number;
+        $create_agent ->current_location =request()->current_location;
+        $create_agent ->photo = $this->movePhotoToFolder();
+        $create_agent ->created_by =Auth::user()->id;
+        $create_agent ->save();
+
+        $create_agents_account =new User;
+        $create_agents_account ->name  =request()->name;
+        $create_agents_account ->email =request()->email;
+        $create_agents_account ->password =Hash::make(request()->password);
+        $create_agents_account  ->save();
+        return response()->json('New Broker has been created successfully');
+    }
+
+    /**
+     * this function adds the photo to the folder
+     */
+    private function movePhotoToFolder(){
+        if(empty(request()->photo)){
+            return null;
+        }else{
+            $photo_path = request()->photo;
+            $file_path = $photo_path->getClientOriginalName();
+            $photo_path->move('Agent/Photos',$file_path);
+            return $file_path;
+        }
     }
 
     /**
@@ -51,9 +85,10 @@ class AgentsController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function edit($id)
+    public function editBroker($id)
     {
-        return view('agents::edit');
+        $edit_agent =Broker::where('id', $id)->get();
+        return response()->json($edit_agent);
     }
 
     /**
@@ -62,9 +97,16 @@ class AgentsController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function update(Request $request, $id)
+    public function updateBroker(Request $request, $id)
     {
         //
+        Broker::where('id', $id)->update(array(
+            'name'       =>request()->name,
+            'email'      =>request()->email,
+            'phone_number'=>request()->phone_number,
+            'current_location'=>request()->current_location
+        ));
+        return response()->json('Agent info has been Updated successfully');
     }
 
     /**
@@ -72,8 +114,10 @@ class AgentsController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function destroy($id)
+    public function deleteBroker($id)
     {
         //
+        Broker::where('id', $id)->delete();
+        return response()->json('Agent has been Deleted successfully');
     }
 }

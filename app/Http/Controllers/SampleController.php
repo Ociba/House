@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use  App\Models\Sample;
+use  App\Models\broker;
+use Modules\Properties\Entities\Category;
 
 class SampleController extends Controller
 {
@@ -21,12 +23,16 @@ class SampleController extends Controller
     */
     public function store(Request $request){
         $validateData = $request->validate([
-            'title' => 'required',
-            'body'  => 'required'
+            'name' => 'required',
+            'email'  => 'required',
+            'phone_number' =>'required',
+            'current_location' =>'required'
         ]);
-        $items  =Sample::create([
-            'title' =>$validateData['title'],
-            'body'  =>$validateData['body'],
+        $items  =broker::create([
+            'name' =>$validateData['name'],
+            'email'  =>$validateData['email'],
+            'phone_number' =>$validateData['phone_number'],
+            'current_location'  =>$validateData['current_location'],
         ]);
         return response()->json('Added successfully');
     }
@@ -54,5 +60,36 @@ class SampleController extends Controller
     public function destroy($id){
         Sample::where('id', $id)->update(array('status' =>'not active'));
         return response()->json('Successfully Deleted');
+    }
+    public function createCategory(Request $request)
+    {
+        //
+        // $create_property_category =new Category;
+        // $create_property_category ->name =request()->name;
+        // $create_property_category ->save();
+        $validateData = $request->validate([
+            'name' => 'required'
+        ]);
+        $items  =Category::create([
+            'name' =>$validateData['name'],
+        ]);
+        return response()->json('New property Category has been created successfully');
+    }
+    public function store1(Request $request)
+    {
+        //
+        $validateData = $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone_number' => 'required',
+            'current_location' => 'required',
+        ]);
+        $items  =Broker::create([
+            'name' =>$validateData['name'],
+            'email' =>$validateData['email'],
+            'phone_number' =>$validateData['phone_number'],
+            'current_location' =>$validateData['current_location'],
+        ]);
+        return response()->json('New Broker has been created successfully');
     }
 }

@@ -15,7 +15,12 @@ class CreateOwnersTable extends Migration
     {
         Schema::create('owners', function (Blueprint $table) {
             $table->id();
-
+            $table->foreignId('cretade_by');
+            $table->string('name');
+            $table->string('email');
+            $table->string('phone_number');
+            $table->string('current_location');
+            $table->string('photo');
             $table->timestamps();
         });
     }

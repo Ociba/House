@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateBrokersTable extends Migration
 {
@@ -15,7 +15,12 @@ class CreateBrokersTable extends Migration
     {
         Schema::create('brokers', function (Blueprint $table) {
             $table->id();
-
+            $table->string('name');
+            $table->string('email');
+            $table->string('phone_number');
+            $table->string('current_location');
+            $table->string('photo');
+            $table->foreignId('created_by');
             $table->timestamps();
         });
     }
